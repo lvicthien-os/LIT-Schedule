@@ -1,0 +1,69 @@
+{
+    "name":  "litschedule",
+    "private":  true,
+    "version":  "0.0.0",
+    "type":  "module",
+    "scripts":  {
+                    "dev":  "vite",
+                    "build":  "tsc -b \u0026\u0026 vite build",
+                    "lint":  "oxlint",
+                    "preview":  "vite preview",
+                    "electron:dev":  "electron .",
+                    "dist:win64":  "tsc -b \u0026\u0026 vite build \u0026\u0026 electron-builder --win --x64"
+                },
+    "dependencies":  {
+                         "firebase":  "^13.4.0",
+                         "lucide-react":  "^1.77.0",
+                         "react":  "^19.3.1",
+                         "react-dom":  "^19.3.1"
+                     },
+    "devDependencies":  {
+                            "@tailwindcss/postcss":  "^4.3.5",
+                            "@types/node":  "^24.19.2",
+                            "@types/react":  "^19.3.0",
+                            "@types/react-dom":  "^19.3.0",
+                            "@vitejs/plugin-react":  "^6.1.2",
+                            "electron":  "^45.4.1",
+                            "electron-builder":  "^26.18.0",
+                            "gh-pages":  "^6.3.0",
+                            "oxlint":  "^1.90.0",
+                            "tailwindcss":  "^4.3.5",
+                            "typescript":  "~7.0.2",
+                            "vite":  "^8.3.6"
+                        },
+    "main":  "electron/main.cjs",
+    "description":  "LIT Schedule - Quản lý Lịch Dịch vụ, Khách hàng \u0026 Tài chính",
+    "author":  "LIT Schedule",
+    "build":  {
+                  "appId":  "com.litschedule.desktop",
+                  "productName":  "LIT Schedule",
+                  "directories":  {
+                                      "output":  "release-win64"
+                                  },
+                  "files":  [
+                                "dist/**/*",
+                                "electron/**/*"
+                            ],
+                  "win":  {
+                              "target":  [
+                                             {
+                                                 "target":  "nsis",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             },
+                                             {
+                                                 "target":  "portable",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             }
+                                         ]
+                          },
+                  "nsis":  {
+                               "oneClick":  false,
+                               "allowToChangeInstallationDirectory":  true,
+                               "createDesktopShortcut":  true
+                           }
+              }
+}
