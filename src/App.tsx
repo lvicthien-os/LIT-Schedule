@@ -2854,14 +2854,7 @@ export function App() {
               <input type="file" accept="application/json,.json" onChange={handleImportJSON} className="hidden" />
             </label>
 
-            <button
-              type="button"
-              onClick={() => exportToCSV(appointments)}
-              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>Xuất CSV</span>
-            </button>
+            
             <button
               type="button"
               onClick={() => exportToXLSM(appointments, expenses)}
@@ -2930,63 +2923,6 @@ export function App() {
 }
 
 
-
-function exportToCSV(rowsData: any[] = []) {
-  const list = Array.isArray(rowsData) ? rowsData : [];
-  const headers = [
-    "ID",
-    "Ngày (dd/mm/yyyy)",
-    "Giờ bắt đầu",
-    "Giờ kết thúc",
-    "Khách hàng",
-    "SĐT",
-    "Dịch vụ",
-    "Địa điểm",
-    "Tổng tiền",
-    "Đã cọc",
-    "Đã thanh toán",
-    "Còn lại",
-    "Trạng thái làm việc",
-    "Trạng thái thanh toán",
-    "Ghi chú",
-  ];
-  const rows = list.map((a: any) => {
-    const total = Number(a.totalServiceAmount ?? a.price ?? 0) || 0;
-    const deposit = Number(a.depositAmount ?? a.deposit ?? 0) || 0;
-    const paid = typeof getPaidAmount === "function" ? getPaidAmount(a) : deposit;
-    const rem = typeof getRemainingAmount === "function" ? getRemainingAmount(a) : Math.max(0, total - paid);
-    return [
-      a.id ?? "",
-      typeof formatDateDMY === "function" ? formatDateDMY(a.serviceDate || "") : (a.serviceDate || ""),
-      a.startTime ?? "",
-      a.endTime ?? "",
-      a.customerName ?? "",
-      a.customerPhone ?? "",
-      a.serviceContent ?? "",
-      a.location ?? "",
-      total,
-      deposit,
-      paid,
-      rem,
-      a.workStatus ?? "",
-      a.paymentStatus ?? "",
-      a.notes ?? "",
-    ];
-  });
-  const csvContent =
-    "\uFEFF" +
-    [headers, ...rows]
-      .map((r) => r.map((v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  const stamp = typeof toDateKey === "function" ? toDateKey(new Date()) : new Date().toISOString().slice(0, 10);
-  link.download = `LIT_Schedule_${stamp}.csv`;
-  link.click();
-  URL.revokeObjectURL(url);
-}
 
 function exportToXLSM(rowsData: any[] = [], expData: any[] = []) {
   const apptList = Array.isArray(rowsData) ? rowsData : [];
