@@ -1766,11 +1766,11 @@ export function App() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="liquid-glass rounded-3xl p-5">
               <p className="text-xs font-medium text-slate-500">Tổng doanh thu dự kiến</p>
-              <p className="text-xl font-bold mt-1 text-slate-900">{formatVND(financialSummary.totalRevenue)}</p>
+              <p className="text-xl font-bold mt-1 text-slate-900">{formatVND(financialSummary.totalExpectedIncome)}</p>
             </div>
             <div className="liquid-glass rounded-3xl p-5">
               <p className="text-xs font-medium text-slate-500">Đã thanh toán</p>
-              <p className="text-xl font-bold mt-1 text-emerald-700">{formatVND(financialSummary.totalPaid)}</p>
+              <p className="text-xl font-bold mt-1 text-emerald-700">{formatVND(financialSummary.totalActualReceived)}</p>
             </div>
             <div className="liquid-glass rounded-3xl p-5">
               <p className="text-xs font-medium text-slate-500">Công nợ còn lại</p>
