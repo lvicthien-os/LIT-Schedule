@@ -2583,7 +2583,7 @@ export function App() {
         </div>
       )}
 
-      {activeTab === "bulk" && (
+      {activeTab === "dashboard" && (
         <div className="space-y-6">
           
         </div>
@@ -3054,7 +3054,7 @@ export function App() {
             ["dashboard", "Tổng quan", LayoutDashboard],
             ["appointments", "Lịch dịch vụ", CalendarClock],
             ["customers", "Khách hàng", Users],
-            ["bulk", "Thêm hàng loạt", FileSpreadsheet],
+            
             ["finance", "Tài chính", Wallet],
             ["settings", "Cài đặt", Settings],
           ] as const
