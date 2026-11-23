@@ -2143,7 +2143,29 @@ export function App() {
                   </p>
                 ) : (
                   <div className="divide-y divide-white/70">
-                    {todayAndUpcomingAppointments.map((item) => {
+                    {todayAndUpcomingAppointments.sort((a, b) => {
+        const parseTs = (item: any) => {
+          const rawDate = String(item?.serviceDate ?? item?.date ?? "").trim();
+          const rawTime = String(item?.startTime ?? item?.time ?? "00:00").trim();
+          let y = 9999, m = 12, d = 31;
+          const dmy = rawDate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+          const ymd = rawDate.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/);
+          if (dmy) {
+            d = Number(dmy[1]);
+            m = Number(dmy[2]);
+            y = Number(dmy[3]);
+          } else if (ymd) {
+            y = Number(ymd[1]);
+            m = Number(ymd[2]);
+            d = Number(ymd[3]);
+          }
+          const tm = rawTime.match(/^(\d{1,2}):(\d{1,2})/);
+          const hh = tm ? Number(tm[1]) : 0;
+          const mm = tm ? Number(tm[2]) : 0;
+          return new Date(y, m - 1, d, hh, mm, 0, 0).getTime();
+        };
+        return parseTs(a) - parseTs(b);
+      }).map((item) => {
                       const isTodayItem = item.serviceDate === todayKey;
                       const noteDisplay = item.notes?.trim() || item.location?.trim() || "Không có ghi chú";
                       return (
