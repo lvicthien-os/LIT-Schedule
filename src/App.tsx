@@ -1667,7 +1667,7 @@ export function App() {
             <input
               type="text"
               inputMode="numeric"
-              placeholder="Tổng tiền dịch vụ (VNĐ, tự nhảy dấu phẩy)"
+              placeholder="Tổng tiền dịch vụ (VNĐ)"
               value={editForm.totalServiceAmount}
               onChange={(e) =>
                 setEditForm({ ...editForm, totalServiceAmount: handleThousandInputChange(e.target.value) })
@@ -1811,7 +1811,7 @@ export function App() {
             <input
               type="text"
               inputMode="numeric"
-              placeholder="Nhập số tiền (VNĐ, tự nhảy dấu phẩy)..."
+              placeholder="Nhập số tiền (VNĐ)..."
               value={payAmountInput[appt.id] || ""}
               onChange={(e) =>
                 setPayAmountInput((prev) => ({ ...prev, [appt.id]: handleThousandInputChange(e.target.value) }))
@@ -1951,9 +1951,6 @@ export function App() {
                 <Plus className="w-5 h-5 text-sky-600" />
                 <span>Tạo lịch dịch vụ mới</span>
               </div>
-              <span className="text-xs font-medium text-sky-800 bg-sky-100/80 px-3 py-1 rounded-full">
-                Tự nhảy dấu phẩy theo VNĐ (gõ 1000000 → 1,000,000)
-              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input
@@ -2005,7 +2002,7 @@ export function App() {
               <input
                 type="text"
                 inputMode="numeric"
-                placeholder="Tổng tiền dịch vụ (VNĐ, tự nhảy dấu phẩy)"
+                placeholder="Tổng tiền dịch vụ (VNĐ)"
                 value={totalAmount}
                 onChange={(e) => setTotalAmount(handleThousandInputChange(e.target.value))}
                 className="px-4 py-2.5 rounded-2xl bg-white/75 border border-white/80 text-sm"
@@ -2658,9 +2655,6 @@ export function App() {
                 <Receipt className="w-5 h-5 text-emerald-700" />
                 <span>Thêm khoản thu (In Thiệp, in ảnh, ảnh thẻ, thu nhập khác...)</span>
               </div>
-              <span className="text-xs font-medium text-emerald-900 bg-emerald-100/80 px-3 py-1 rounded-full">
-                Tự nhảy dấu phẩy theo VNĐ (gõ 500000 → 500,000)
-              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input
@@ -2674,7 +2668,7 @@ export function App() {
                 required
                 type="text"
                 inputMode="numeric"
-                placeholder="Số tiền thu (VNĐ, tự nhảy dấu phẩy) *"
+                placeholder="Số tiền thu (VNĐ) *"
                 value={incAmount}
                 onChange={(e) => setIncAmount(handleThousandInputChange(e.target.value))}
                 className="px-4 py-2.5 rounded-2xl bg-white/80 border border-white text-sm"
@@ -2718,9 +2712,6 @@ export function App() {
                 <Receipt className="w-5 h-5 text-amber-700" />
                 <span>Thêm khoản chi vật tư, công thợ hoặc chi phí khác</span>
               </div>
-              <span className="text-xs font-medium text-amber-900 bg-amber-100/80 px-3 py-1 rounded-full">
-                Tự nhảy dấu phẩy theo VNĐ (gõ 500000 → 500,000)
-              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <select
@@ -2743,7 +2734,7 @@ export function App() {
                 required
                 type="text"
                 inputMode="numeric"
-                placeholder="Số tiền chi (VNĐ, tự nhảy dấu phẩy) *"
+                placeholder="Số tiền chi (VNĐ) *"
                 value={expAmount}
                 onChange={(e) => setExpAmount(handleThousandInputChange(e.target.value))}
                 className="px-4 py-2.5 rounded-2xl bg-white/80 border border-white text-sm"
