@@ -1868,23 +1868,17 @@ export function App() {
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button
+          <button title="Đồng bộ Drive" aria-label="Đồng bộ Drive"
             type="button"
             onClick={handleConnectDrive}
             disabled={isSyncing}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-sky-600 text-white text-sm font-medium hover:bg-sky-700 transition cursor-pointer"
-          >
-            <RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} />
-            {savedAuth?.autoSyncEnabled ? "Đồng bộ Drive ngay" : "Kết nối Google Drive"}
-          </button>
-          <button
+          ><RefreshCw className={`w-4 h-4 ${isSyncing ? "animate-spin" : ""}`} /></button>
+          <button title="Xuất CSV" aria-label="Xuất CSV"
             type="button"
             onClick={handleExportCSV}
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            Xuất CSV
-          </button>
+          ><Download className="w-4 h-4" /></button>
         </div>
       </header>
 
@@ -2976,32 +2970,25 @@ export function App() {
               placeholder="Google OAuth Client ID (...apps.googleusercontent.com)"
               className="px-4 py-2 rounded-2xl bg-white/80 border border-white text-sm flex-1 min-w-[260px]"
             />
-            <button
+            <button title="Đồng bộ Drive" aria-label="Đồng bộ Drive"
               type="button"
               onClick={() => {
                 setClientId(clientIdInput.trim());
                 setDriveStatus("Đã lưu Client ID");
               }}
               className="px-4 py-2 rounded-2xl bg-slate-800 text-white text-sm font-semibold hover:bg-slate-700 cursor-pointer"
-            >
-              Lưu Client ID
-            </button>
-            <button
+            >Lưu Client ID</button>
+            <button title="Đồng bộ Drive" aria-label="Đồng bộ Drive"
               type="button"
               onClick={handleConnectDrive}
               className="px-4 py-2 rounded-2xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 cursor-pointer"
-            >
-              {savedAuth?.autoSyncEnabled ? "Đồng bộ ngay" : "Kết nối Drive"}
-            </button>
+            >{savedAuth?.autoSyncEnabled ? "Đồng bộ ngay" : "Kết nối Drive"}</button>
             {savedAuth?.autoSyncEnabled && (
-              <button
+              <button title="Đồng bộ Drive" aria-label="Đồng bộ Drive"
                 type="button"
                 onClick={handleDisconnectDrive}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white/85 text-slate-800 border border-white text-sm font-semibold hover:bg-white cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-                Đăng xuất Drive
-              </button>
+              ><LogOut className="w-4 h-4" /></button>
             )}
           </div>
 
