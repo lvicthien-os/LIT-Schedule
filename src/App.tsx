@@ -1839,13 +1839,8 @@ export function App() {
       <header className="liquid-glass rounded-3xl px-6 py-4 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-2">
-              <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-black text-white text-xs font-extrabold tracking-widest shadow-sm">
-                LIT STUDIO
-              </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                LIT STUDIO
-              </span>
+            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-xs font-extrabold tracking-wider shadow-sm shadow-teal-600/20">
+              Schedule
             </span>
             <span
               title={driveStatus}
