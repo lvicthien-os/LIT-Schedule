@@ -1839,7 +1839,7 @@ export function App() {
       <header className="liquid-glass rounded-3xl px-6 py-4 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gradient-to-r from-teal-600 to-emerald-600 text-white text-xs font-extrabold tracking-wider shadow-sm shadow-teal-600/20">LIT Schedule</span>
+            <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-slate-950 border border-amber-200/80 text-xs font-extrabold tracking-wider shadow-sm shadow-amber-500/25">LIT Schedule</span>
             <span
               title={driveStatus}
               className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full ${
@@ -1853,7 +1853,6 @@ export function App() {
               ) : (
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
               )}
-              <span>{isSyncing ? "Đang đồng bộ" : "Đã đồng bộ"}</span>
             </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight mt-1 text-slate-900">
