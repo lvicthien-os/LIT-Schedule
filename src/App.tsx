@@ -565,7 +565,128 @@ function getVietnameseLunarInfo(dateObj: Date): {
   return { lunarDay, lunarMonth, lunarYear, isLeap, label, isSpecialDay };
 }
 
+
+function parseAppointmentsCsvText(rawCsv: string): {
+  imported: any[];
+  skipped: number;
+  errors: string[];
+} {
+  const cleanText = rawCsv.replace(/^\uFEFF/, "").trim();
+  if (!cleanText) return { imported: [], skipped: 0, errors: ["File CSV trống."] };
+
+  const parseCsvRow = (line: string): string[] => {
+    const out: string[] = [];
+    let cur = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (ch === "," && !inQuotes) {
+        out.push(cur.trim());
+        cur = "";
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur.trim());
+    return out;
+  };
+
+  const lines = cleanText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length < 2) {
+    return { imported: [], skipped: 0, errors: ["Không tìm thấy dòng dữ liệu lịch nào trong file CSV."] };
+  }
+
+  const headers = parseCsvRow(lines[0]).map((h) => h.trim());
+  const colIndex = (name: string) => headers.findIndex((h) => h.toLowerCase() === name.toLowerCase());
+
+  const idxId = colIndex("ID");
+  const idxDate = colIndex("Ngay");
+  const idxStart = colIndex("GioBatDau");
+  const idxEnd = colIndex("GioKetThuc");
+  const idxService = colIndex("DichVu");
+  const idxCustomer = colIndex("KhachHang");
+  const idxPhone = colIndex("SoDienThoai");
+  const idxLocation = colIndex("DiaDiem");
+  const idxTotal = colIndex("TongTien");
+  const idxDeposit = colIndex("DatCoc");
+  const idxPaid = colIndex("DaThanhToan");
+  const idxMaterial = colIndex("ChiPhiVatTu");
+  const idxLabor = colIndex("ChiPhiCongTho");
+  const idxWorkStatus = colIndex("TrangThaiCongViec");
+  const idxPayStatus = colIndex("TrangThaiThanhToan");
+
+  const toNum = (v: string | undefined) => {
+    if (!v) return 0;
+    const n = Number(String(v).replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0;
+  };
+
+  const imported: any[] = [];
+  const errors: string[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCsvRow(lines[i]);
+    if (cols.every((c) => !c)) continue;
+
+    const rawDate = idxDate >= 0 ? cols[idxDate] : "";
+    let serviceDate = rawDate;
+    const dmy = rawDate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+    if (dmy) {
+      serviceDate = `${dmy[3]}-${dmy[2].padStart(2, "0")}-${dmy[1].padStart(2, "0")}`;
+    }
+
+    const serviceContent = (idxService >= 0 ? cols[idxService] : "") || "Dịch vụ";
+    const customerName = (idxCustomer >= 0 ? cols[idxCustomer] : "") || "Khách hàng";
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(serviceDate)) {
+      errors.push(`Dòng ${i + 1}: Ngày không hợp lệ ("${rawDate}")`);
+      continue;
+    }
+
+    const totalServiceAmount = toNum(idxTotal >= 0 ? cols[idxTotal] : "0");
+    const depositAmount = toNum(idxDeposit >= 0 ? cols[idxDeposit] : "0");
+    const paidAmount = idxPaid >= 0 && cols[idxPaid] !== "" ? toNum(cols[idxPaid]) : depositAmount;
+    const materialCost = toNum(idxMaterial >= 0 ? cols[idxMaterial] : "0");
+    const laborCost = toNum(idxLabor >= 0 ? cols[idxLabor] : "0");
+
+    imported.push({
+      id: (idxId >= 0 && cols[idxId]) ? cols[idxId] : "APT-" + Math.floor(10000 + Math.random() * 90000),
+      serviceContent,
+      customerName,
+      customerPhone: idxPhone >= 0 ? cols[idxPhone] || "" : "",
+      location: idxLocation >= 0 && cols[idxLocation] ? cols[idxLocation] : "Đà Nẵng",
+      serviceDate,
+      startTime: normalizeTimeToken(idxStart >= 0 && cols[idxStart] ? cols[idxStart] : "09:00"),
+      endTime: normalizeTimeToken(idxEnd >= 0 && cols[idxEnd] ? cols[idxEnd] : "11:00"),
+      totalServiceAmount,
+      depositAmount,
+      paidAmount,
+      extraPaidAmount: Math.max(0, paidAmount - depositAmount),
+      materialCost,
+      laborCost,
+      workStatus: (idxWorkStatus >= 0 && cols[idxWorkStatus]) || "Đã xác nhận",
+      paymentStatus:
+        (idxPayStatus >= 0 && cols[idxPayStatus]) ||
+        (paidAmount >= totalServiceAmount && totalServiceAmount > 0
+          ? "Đã thanh toán đủ"
+          : paidAmount > 0
+          ? "Đã đặt cọc"
+          : "Chưa thanh toán"),
+      notes: "",
+    });
+  }
+
+  return { imported, skipped: 0, errors };
+}
+
 export function App() {
+  const [csvImportMessage, setCsvImportMessage] = React.useState<string | null>(null);
   const [clientId, setClientId] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(CLIENT_ID_STORAGE);
@@ -1241,7 +1362,32 @@ export function App() {
     setSelectedDateKey(toDateKey(now));
   }
 
-  async function handleCreateAppointment(e: React.FormEvent) {
+  
+  async function handleSettingsCsvImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const text = await file.text();
+    const res = parseAppointmentsCsvText(text);
+    if (res.errors.length > 0 && res.imported.length === 0) {
+      setCsvImportMessage(res.errors[0]);
+      return;
+    }
+    const existingIds = new Set((appointments || []).map((a: any) => String(a.id)));
+    const uniqueNew = res.imported.filter((item: any) => !existingIds.has(String(item.id)));
+    const skippedCount = res.imported.length - uniqueNew.length;
+    if (uniqueNew.length > 0) {
+      setAppointments((prev: any[]) => {
+        const merged = [...uniqueNew, ...prev];
+        return merged;
+      });
+    }
+    setCsvImportMessage(
+      `Đã nhập ${uniqueNew.length} lịch từ "${file.name}"${skippedCount > 0 ? ` (bỏ qua ${skippedCount} lịch trùng ID)` : ""}.`
+    );
+  }
+
+async function handleCreateAppointment(e: React.FormEvent) {
     e.preventDefault();
     const total = parseMoneyInput(totalAmount);
     const deposit = parseMoneyInput(depositAmount);
@@ -3025,7 +3171,33 @@ export function App() {
 
         <div className="liquid-glass rounded-3xl p-6 mt-6 space-y-2">
           <div className="liquid-glass rounded-3xl p-6 mt-6 space-y-4">
-          <div className="flex flex-wrap items-center gap-2.5">
+          
+        <div className="liquid-glass rounded-3xl p-6 mt-6 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Nhập CSV</h3>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Nhập danh sách lịch dịch vụ từ file CSV (.csv) theo chuẩn cột của LIT Schedule (tự bỏ qua lịch trùng ID).
+              </p>
+            </div>
+            <label className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-semibold shadow-sm transition cursor-pointer inline-flex items-center gap-2">
+              <span>Chọn file CSV</span>
+              <input
+                type="file"
+                accept=".csv,text/csv"
+                onChange={handleSettingsCsvImport}
+                className="hidden"
+              />
+            </label>
+          </div>
+          {csvImportMessage && (
+            <div className="p-3 rounded-2xl bg-emerald-50/90 border border-emerald-200 text-xs font-medium text-emerald-900">
+              {csvImportMessage}
+            </div>
+          )}
+        </div>
+
+<div className="flex flex-wrap items-center gap-2.5">
             <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-slate-950 border border-amber-200/80 text-xs font-extrabold tracking-widest shadow-sm">
               LIT STUDIO
             </span>
