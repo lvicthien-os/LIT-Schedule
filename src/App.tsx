@@ -3024,12 +3024,48 @@ export function App() {
         </div>
 
         <div className="liquid-glass rounded-3xl p-6 mt-6 space-y-2">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-black text-white text-xs font-extrabold tracking-widest">
+          <div className="liquid-glass rounded-3xl p-6 mt-6 space-y-4">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 text-slate-950 border border-amber-200/80 text-xs font-extrabold tracking-widest shadow-sm">
               LIT STUDIO
             </span>
             <h3 className="text-base font-bold text-slate-900">Giới thiệu ứng dụng</h3>
           </div>
+
+          <div className="space-y-2">
+            <p className="text-base font-bold text-slate-900">
+              Giải pháp quản lý lịch dịch vụ &amp; tài chính thông minh
+            </p>
+            <p className="text-sm leading-relaxed text-slate-700">
+              <strong className="font-semibold text-slate-900">LIT STUDIO</strong> nền tảng quản lý được phát triển nhằm hỗ trợ tối ưu quy trình vận hành, quản lý lịch hẹn, thông tin khách hàng và theo dõi thu chi một cách khoa học, trực quan và hiệu quả.
+            </p>
+          </div>
+
+          <div className="pt-2 border-t border-white/60 space-y-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+              TÍNH NĂNG NỔI BẬT
+            </h4>
+            <ul className="space-y-1.5 text-sm text-slate-700 list-disc pl-5">
+              <li>Quản lý lịch dịch vụ và lịch hẹn tập trung.</li>
+              <li>Lưu trữ thông tin khách hàng và chi tiết dịch vụ.</li>
+              <li>Theo dõi doanh thu, tiền cọc và công nợ.</li>
+              <li>Quản lý trạng thái đặt lịch, thanh toán và hoàn thành.</li>
+              <li>Thống kê thu chi, hỗ trợ kiểm soát dòng tiền.</li>
+              <li>Giao diện trực quan, dễ sử dụng trên nhiều thiết bị.</li>
+            </ul>
+          </div>
+
+          <div className="pt-3 border-t border-white/60 space-y-1 text-xs text-slate-600">
+            <p className="font-bold uppercase tracking-wider text-slate-800">
+              ĐƯỢC PHÁT TRIỂN BỞI LIT STUDIO
+            </p>
+            <p>© 2026 LIT STUDIO. All rights reserved.</p>
+            <p>
+              Bản quyền thuộc <strong className="text-slate-800">LIT STUDIO</strong> | Hỗ trợ:{" "}
+              <strong className="text-slate-800">0935 187 404 (Đặng Thiện)</strong>
+            </p>
+          </div>
+        </div>
           <p className="text-sm font-medium text-slate-800">
             App quản lý lịch và thu chi
           </p>
