@@ -571,7 +571,7 @@ function parseAppointmentsCsvText(rawCsv: string): {
   skipped: number;
   errors: string[];
 } {
-  const cleanText = rawCsv.replace(/^\uFEFF/, "").trim();
+  const cleanText = String(rawCsv || "").replace(/^﻿/, "").trim();
   if (!cleanText) return { imported: [], skipped: 0, errors: ["File CSV trống."] };
 
   const parseCsvRow = (line: string): string[] => {
@@ -655,6 +655,12 @@ function parseAppointmentsCsvText(rawCsv: string): {
     const materialCost = toNum(idxMaterial >= 0 ? cols[idxMaterial] : "0");
     const laborCost = toNum(idxLabor >= 0 ? cols[idxLabor] : "0");
 
+    const safeTime = (t: string | undefined, fb: string) => {
+      const m = String(t || "").trim().match(/^(\d{1,2}):(\d{2})$/);
+      if (!m) return fb;
+      return `${String(Math.min(23, Math.max(0, Number(m[1])))).padStart(2, "0")}:${String(Math.min(59, Math.max(0, Number(m[2])))).padStart(2, "0")}`;
+    };
+
     imported.push({
       id: (idxId >= 0 && cols[idxId]) ? cols[idxId] : "APT-" + Math.floor(10000 + Math.random() * 90000),
       serviceContent,
@@ -662,8 +668,8 @@ function parseAppointmentsCsvText(rawCsv: string): {
       customerPhone: idxPhone >= 0 ? cols[idxPhone] || "" : "",
       location: idxLocation >= 0 && cols[idxLocation] ? cols[idxLocation] : "Đà Nẵng",
       serviceDate,
-      startTime: normalizeTimeToken(idxStart >= 0 && cols[idxStart] ? cols[idxStart] : "09:00"),
-      endTime: normalizeTimeToken(idxEnd >= 0 && cols[idxEnd] ? cols[idxEnd] : "11:00"),
+      startTime: safeTime(idxStart >= 0 ? cols[idxStart] : "09:00", "09:00"),
+      endTime: safeTime(idxEnd >= 0 ? cols[idxEnd] : "11:00", "11:00"),
       totalServiceAmount,
       depositAmount,
       paidAmount,
@@ -684,9 +690,8 @@ function parseAppointmentsCsvText(rawCsv: string): {
 
   return { imported, skipped: 0, errors };
 }
-
 export function App() {
-  const [csvImportMessage, setCsvImportMessage] = React.useState<string | null>(null);
+  const [csvImportMessage, setCsvImportMessage] = useState<string | null>(null);
   const [clientId, setClientId] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(CLIENT_ID_STORAGE);
