@@ -1,0 +1,33 @@
+name: LITSchedule Swift Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ios-check:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Swift and Xcode
+        run: swift --version && xcodebuild -version
+
+      - name: Build for iOS Simulator
+        run: |
+          SDK_PATH=$(xcrun --sdk iphonesimulator --show-sdk-path)
+          SWIFT_BIN_DIR=$(dirname "$(xcrun --find swift)")
+          cat <<EOF > ios-sim.json
+          {
+            "version": 1,
+            "sdk": "$SDK_PATH",
+            "toolchain-bin-dir": "$SWIFT_BIN_DIR",
+            "target": "arm64-apple-ios18.0-simulator",
+            "extra-swiftc-flags": ["-F", "$SDK_PATH/System/Library/Frameworks"],
+            "extra-cc-flags": ["-isysroot", "$SDK_PATH"],
+            "extra-cpp-flags": []
+          }
+          EOF
+          swift build --destination ios-sim.json
