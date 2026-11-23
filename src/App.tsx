@@ -2031,6 +2031,81 @@ export function App() {
               Lưu lịch dịch vụ
             </button>
           </form>
+
+          <div className="pt-4 border-t border-white/60 space-y-4">
+            <form onSubmit={handleCreateBulkAppointments} className="liquid-glass rounded-3xl p-6 space-y-4">
+            <div>
+              <div className="flex items-center gap-2 font-semibold text-lg text-slate-900">
+                <FileSpreadsheet className="w-5 h-5 text-sky-600" />
+                <span>Thêm hàng loạt lịch dịch vụ</span>
+              </div>
+              <p className="text-xs text-slate-600 mt-1">
+                Mỗi dòng một lịch theo thứ tự: <strong>Dịch vụ - Tên khách hàng - Ngày (dd/mm/yyyy) - Giờ bắt đầu-Giờ kết thúc - Tổng tiền - Đặt cọc - Ghi chú</strong>
+              </p>
+            </div>
+
+            <textarea
+              rows={7}
+              value={bulkText}
+              onChange={(e) => setBulkText(e.target.value)}
+              placeholder={"Nhập danh sách lịch dịch vụ (mỗi dòng một lịch)...\nVí dụ: Photobooth Pre - Nguyễn Hậu - 12/11/2026 - 10:00-14:00 - 3,490,000 - 500,000 - Nhà hàng Gia Hân"}
+              className="w-full px-4 py-3 rounded-2xl bg-white/80 border border-white text-sm font-mono leading-relaxed focus:outline-none"
+            />
+
+            {bulkFeedback && (
+              <div className="p-3 rounded-2xl bg-sky-50/90 border border-sky-200 text-xs font-medium text-sky-900">
+                {bulkFeedback}
+              </div>
+            )}
+
+            {bulkPreview.errors.length > 0 && (
+              <div className="p-3 rounded-2xl bg-rose-50/90 border border-rose-200 text-xs text-rose-800 space-y-1">
+                {bulkPreview.errors.map((err, i) => (
+                  <div key={i}>• {err}</div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-slate-700">
+                Nhận diện sẵn sàng thêm: <strong className="text-sky-700">{bulkPreview.parsed.length}</strong> lịch dịch vụ
+              </span>
+              <button
+                type="submit"
+                className="px-6 py-2.5 rounded-2xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 transition cursor-pointer"
+              >
+                Thêm {bulkPreview.parsed.length} lịch vào hệ thống
+              </button>
+            </div>
+          </form>
+
+          <div className="liquid-glass rounded-3xl p-6 space-y-3">
+            <h3 className="text-sm font-bold text-slate-800">
+              Xem trước lịch sẽ được tạo ({bulkPreview.parsed.length})
+            </h3>
+            {bulkPreview.parsed.length === 0 ? (
+              <p className="text-xs text-slate-500">Chưa có dòng hợp lệ nào để xem trước.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {bulkPreview.parsed.map((item, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-white/70 border border-white text-xs space-y-1">
+                    <div className="font-bold text-sky-800">
+                      {formatDateDMY(item.serviceDate)} • {item.startTime} - {item.endTime}
+                    </div>
+                    <div className="font-bold text-sm text-slate-900">
+                      {item.serviceContent} — {item.customerName}
+                    </div>
+                    <div className="text-slate-700">
+                      Tổng: <strong>{formatVND(item.totalServiceAmount)}</strong> • Cọc:{" "}
+                      <strong className="text-emerald-700">{formatVND(item.depositAmount)}</strong>
+                    </div>
+                    {item.notes && <div className="text-slate-500">Ghi chú / Địa điểm: {item.notes}</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          </div>
         </div>
       )}
 
@@ -2510,78 +2585,7 @@ export function App() {
 
       {activeTab === "bulk" && (
         <div className="space-y-6">
-          <form onSubmit={handleCreateBulkAppointments} className="liquid-glass rounded-3xl p-6 space-y-4">
-            <div>
-              <div className="flex items-center gap-2 font-semibold text-lg text-slate-900">
-                <FileSpreadsheet className="w-5 h-5 text-sky-600" />
-                <span>Thêm hàng loạt lịch dịch vụ</span>
-              </div>
-              <p className="text-xs text-slate-600 mt-1">
-                Mỗi dòng một lịch theo thứ tự: <strong>Dịch vụ - Tên khách hàng - Ngày (dd/mm/yyyy) - Giờ bắt đầu-Giờ kết thúc - Tổng tiền - Đặt cọc - Ghi chú</strong>
-              </p>
-            </div>
-
-            <textarea
-              rows={7}
-              value={bulkText}
-              onChange={(e) => setBulkText(e.target.value)}
-              placeholder={"Nhập danh sách lịch dịch vụ (mỗi dòng một lịch)...\nVí dụ: Photobooth Pre - Nguyễn Hậu - 12/11/2026 - 10:00-14:00 - 3,490,000 - 500,000 - Nhà hàng Gia Hân"}
-              className="w-full px-4 py-3 rounded-2xl bg-white/80 border border-white text-sm font-mono leading-relaxed focus:outline-none"
-            />
-
-            {bulkFeedback && (
-              <div className="p-3 rounded-2xl bg-sky-50/90 border border-sky-200 text-xs font-medium text-sky-900">
-                {bulkFeedback}
-              </div>
-            )}
-
-            {bulkPreview.errors.length > 0 && (
-              <div className="p-3 rounded-2xl bg-rose-50/90 border border-rose-200 text-xs text-rose-800 space-y-1">
-                {bulkPreview.errors.map((err, i) => (
-                  <div key={i}>• {err}</div>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="text-xs font-semibold text-slate-700">
-                Nhận diện sẵn sàng thêm: <strong className="text-sky-700">{bulkPreview.parsed.length}</strong> lịch dịch vụ
-              </span>
-              <button
-                type="submit"
-                className="px-6 py-2.5 rounded-2xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 transition cursor-pointer"
-              >
-                Thêm {bulkPreview.parsed.length} lịch vào hệ thống
-              </button>
-            </div>
-          </form>
-
-          <div className="liquid-glass rounded-3xl p-6 space-y-3">
-            <h3 className="text-sm font-bold text-slate-800">
-              Xem trước lịch sẽ được tạo ({bulkPreview.parsed.length})
-            </h3>
-            {bulkPreview.parsed.length === 0 ? (
-              <p className="text-xs text-slate-500">Chưa có dòng hợp lệ nào để xem trước.</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {bulkPreview.parsed.map((item, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-white/70 border border-white text-xs space-y-1">
-                    <div className="font-bold text-sky-800">
-                      {formatDateDMY(item.serviceDate)} • {item.startTime} - {item.endTime}
-                    </div>
-                    <div className="font-bold text-sm text-slate-900">
-                      {item.serviceContent} — {item.customerName}
-                    </div>
-                    <div className="text-slate-700">
-                      Tổng: <strong>{formatVND(item.totalServiceAmount)}</strong> • Cọc:{" "}
-                      <strong className="text-emerald-700">{formatVND(item.depositAmount)}</strong>
-                    </div>
-                    {item.notes && <div className="text-slate-500">Ghi chú / Địa điểm: {item.notes}</div>}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          
         </div>
       )}
 
